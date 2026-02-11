@@ -2,8 +2,7 @@ node_modules/
 dist/
 test-results/
 playwright-report/
-allure-results/
-allure-report/
+
 blob-report/
 .env
 *.log
