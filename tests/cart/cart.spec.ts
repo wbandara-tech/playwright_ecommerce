@@ -106,6 +106,7 @@ test.describe('Cart Management @cart @regression', () => {
 
     // Step 5-6: Click View Cart in modal
     const viewCartLink = homePage.page.locator('.modal-content a:has-text("View Cart")');
+    await expect(viewCartLink).toBeVisible({ timeout: 5000 });
     await viewCartLink.click();
 
     // Step 7: Verify product in cart
