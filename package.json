@@ -1,0 +1,36 @@
+{
+  "name": "playwright-ecommerce-automation",
+  "version": "1.0.0",
+  "description": "Industrial-standard Playwright E2E automation framework for AutomationExercise.com",
+  "author": "QA Automation Engineer",
+  "license": "MIT",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:ui": "npx playwright test --ui",
+    "test:debug": "npx playwright test --debug",
+    "test:chrome": "npx playwright test --project=chromium",
+    "test:firefox": "npx playwright test --project=firefox",
+    "test:webkit": "npx playwright test --project=webkit",
+    "test:auth": "npx playwright test --grep @auth",
+    "test:cart": "npx playwright test --grep @cart",
+    "test:checkout": "npx playwright test --grep @checkout",
+    "test:products": "npx playwright test --grep @products",
+    "test:smoke": "npx playwright test --grep @smoke",
+    "test:regression": "npx playwright test --grep @regression",
+    "report": "npx playwright show-report",
+    "report:allure": "npx allure serve allure-results",
+    "lint": "eslint src/ tests/ --ext .ts",
+    "lint:fix": "eslint src/ tests/ --ext .ts --fix"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@faker-js/faker": "^9.3.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "allure-playwright": "^3.0.0",
+    "dotenv": "^16.4.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.7.0"
+  }
+}
