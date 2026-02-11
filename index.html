@@ -83,6 +83,19 @@
     .btn.secondary:hover { background: #484f58; }
     .btn.allure { background: #6c3fc5; }
     .btn.allure:hover { background: #8957e5; }
+    .run-info {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #21262d;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 0.8rem;
+      color: #8b949e;
+      margin-bottom: 30px;
+    }
+    .run-info .dot { width: 8px; height: 8px; border-radius: 50%; background: #97cc64; }
   </style>
 </head>
 <body>
@@ -90,11 +103,15 @@
     <div class="logo">🎭</div>
     <h1>Playwright E-Commerce</h1>
     <p class="subtitle">Industrial-standard E2E test automation for AutomationExercise.com</p>
+    <div class="run-info">
+      <span class="dot"></span>
+      Last run: Feb 11, 2026 &bull; Chromium &bull; 26 tests &bull; 11 passed &bull; 15 failed
+    </div>
     <div class="stats">
       <div class="stat"><div class="stat-value">26</div><div class="stat-label">Test Cases</div></div>
       <div class="stat"><div class="stat-value">10</div><div class="stat-label">Page Objects</div></div>
       <div class="stat"><div class="stat-value">3</div><div class="stat-label">Browsers</div></div>
-      <div class="stat"><div class="stat-value">7</div><div class="stat-label">Test Suites</div></div>
+      <div class="stat"><div class="stat-value">12</div><div class="stat-label">Test Suites</div></div>
     </div>
     <div class="tags">
       <span class="badge green">@smoke</span>
@@ -112,7 +129,7 @@
       <div class="card"><div class="card-icon">⚙️</div><h3>CI/CD Pipeline</h3><p>GitHub Actions with cross-browser matrix, smoke tests &amp; scheduled runs</p></div>
     </div>
     <div>
-      <a href="report.html" class="btn allure">📊 View Report</a>
+      <a href="report.html" class="btn allure">📊 View Allure Report</a>
       <a href="https://github.com/wbandara-tech/playwright_ecommerce" class="btn">View Repository</a>
       <a href="https://github.com/wbandara-tech/playwright_ecommerce/actions" class="btn secondary">CI Runs</a>
     </div>

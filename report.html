@@ -3,483 +3,354 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Allure Test Report - Playwright E-Commerce</title>
+  <title>Allure Report - Playwright E-Commerce</title>
   <style>
+    :root {
+      --bg: #1a1a2e;
+      --sidebar-bg: #16213e;
+      --card-bg: #1e2a47;
+      --border: #2a3a5c;
+      --text: #e0e0e0;
+      --text-muted: #8892a4;
+      --passed: #97cc64;
+      --failed: #fd5a3e;
+      --broken: #ffd050;
+      --skipped: #aaa;
+      --unknown: #d35ebe;
+      --accent: #7b68ee;
+      --accent-hover: #9b8afb;
+      --header-bg: #0f1729;
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #fafbfc; color: #24292f; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-hover); }
 
     /* Sidebar */
-    .sidebar {
-      position: fixed; top: 0; left: 0; width: 240px; height: 100vh;
-      background: #2a2d3e; color: #a5a8c4; padding: 0; overflow-y: auto; z-index: 10;
-    }
-    .sidebar-header {
-      padding: 24px 20px; border-bottom: 1px solid #363952;
-      display: flex; align-items: center; gap: 12px;
-    }
-    .sidebar-header img, .sidebar-logo {
-      width: 32px; height: 32px; border-radius: 6px;
-      background: linear-gradient(135deg, #6c3fc5, #e5493a); display: flex;
-      align-items: center; justify-content: center; font-size: 18px; color: #fff;
-    }
-    .sidebar-header h2 { font-size: 1rem; color: #fff; font-weight: 600; }
-    .sidebar nav { padding: 12px 0; }
-    .sidebar nav a {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 20px; color: #a5a8c4; text-decoration: none;
-      font-size: 0.9rem; transition: all 0.15s;
-    }
-    .sidebar nav a:hover, .sidebar nav a.active { background: #363952; color: #fff; }
-    .sidebar nav a .icon { font-size: 1.1rem; width: 22px; text-align: center; }
+    .sidebar { width: 260px; background: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; height: 100vh; overflow-y: auto; }
+    .sidebar-header { padding: 24px 20px; border-bottom: 1px solid var(--border); }
+    .sidebar-header h2 { font-size: 1.3rem; color: #fff; display: flex; align-items: center; gap: 10px; }
+    .sidebar-header h2 .allure-icon { width: 28px; height: 28px; background: var(--accent); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+    .sidebar-header .meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 6px; }
+    .sidebar nav { flex: 1; padding: 12px 0; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; transition: all 0.2s; border-left: 3px solid transparent; }
+    .nav-item:hover, .nav-item.active { background: rgba(123,104,238,0.1); color: #fff; border-left-color: var(--accent); }
+    .nav-item .icon { font-size: 1.1rem; width: 24px; text-align: center; }
+    .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--border); font-size: 0.75rem; color: var(--text-muted); }
+    .sidebar-footer a { color: var(--accent); }
 
     /* Main */
-    .main { margin-left: 240px; padding: 30px 40px; min-height: 100vh; }
-
-    /* Header bar */
-    .header-bar {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 30px; flex-wrap: wrap; gap: 12px;
-    }
-    .header-bar h1 { font-size: 1.6rem; color: #24292f; }
-    .header-bar .meta { display: flex; gap: 16px; font-size: 0.85rem; color: #656d76; }
-    .header-bar .meta span { display: flex; align-items: center; gap: 4px; }
+    .main { margin-left: 260px; flex: 1; padding: 0; }
+    .topbar { background: var(--header-bg); padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; }
+    .topbar h1 { font-size: 1.2rem; color: #fff; }
+    .topbar .back-link { font-size: 0.85rem; color: var(--accent); padding: 6px 16px; border: 1px solid var(--accent); border-radius: 6px; transition: all 0.2s; }
+    .topbar .back-link:hover { background: var(--accent); color: #fff; }
+    .content { padding: 32px; }
 
     /* Overview Cards */
-    .overview-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 16px; margin-bottom: 30px;
-    }
-    .overview-card {
-      background: #fff; border: 1px solid #d0d7de; border-radius: 10px;
-      padding: 20px; text-align: center;
-    }
-    .overview-card .value { font-size: 2rem; font-weight: 700; }
-    .overview-card .label { font-size: 0.8rem; color: #656d76; margin-top: 4px; }
-    .overview-card.passed .value { color: #1a7f37; }
-    .overview-card.failed .value { color: #cf222e; }
-    .overview-card.skipped .value { color: #bf8700; }
-    .overview-card.total .value { color: #6639ba; }
-    .overview-card.duration .value { color: #0969da; font-size: 1.5rem; }
+    .overview-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 32px; }
+    .ov-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; text-align: center; }
+    .ov-card .value { font-size: 2.2rem; font-weight: 700; }
+    .ov-card .label { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+    .ov-card.passed .value { color: var(--passed); }
+    .ov-card.failed .value { color: var(--failed); }
+    .ov-card.total .value { color: var(--accent); }
+    .ov-card.duration .value { color: var(--broken); font-size: 1.6rem; }
 
     /* Donut Chart */
-    .chart-section {
-      display: flex; gap: 30px; margin-bottom: 30px; flex-wrap: wrap;
-      align-items: flex-start;
-    }
-    .donut-container {
-      background: #fff; border: 1px solid #d0d7de; border-radius: 10px;
-      padding: 24px; text-align: center; min-width: 260px;
-    }
-    .donut-container h3 { margin-bottom: 16px; font-size: 1rem; color: #24292f; }
-    .donut-wrap { position: relative; width: 200px; height: 200px; margin: 0 auto; }
-    .donut-wrap svg { transform: rotate(-90deg); }
-    .donut-center {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      text-align: center;
-    }
-    .donut-center .pct { font-size: 2rem; font-weight: 700; color: #1a7f37; }
-    .donut-center .pct-label { font-size: 0.75rem; color: #656d76; }
-    .legend { display: flex; gap: 16px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
-    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; }
-    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .chart-section { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+    .chart-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    .chart-card h3 { font-size: 1rem; color: #fff; margin-bottom: 16px; }
+    .donut-container { display: flex; align-items: center; justify-content: center; gap: 32px; }
+    .donut-wrapper { position: relative; width: 180px; height: 180px; }
+    .donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
+    .donut-center .pct { font-size: 2rem; font-weight: 700; color: #fff; }
+    .donut-center .sub { font-size: 0.7rem; color: var(--text-muted); }
+    .legend { display: flex; flex-direction: column; gap: 10px; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+    .legend-count { margin-left: auto; font-weight: 600; padding-left: 12px; }
 
-    /* Trend Chart */
-    .trend-container {
-      background: #fff; border: 1px solid #d0d7de; border-radius: 10px;
-      padding: 24px; flex: 1; min-width: 350px;
-    }
-    .trend-container h3 { margin-bottom: 16px; font-size: 1rem; color: #24292f; }
-    .trend-bars { display: flex; align-items: flex-end; gap: 8px; height: 160px; padding: 0 10px; }
-    .trend-bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-    .trend-bar {
-      width: 100%; border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.3s;
-    }
-    .trend-bar.passed { background: #1a7f37; }
-    .trend-bar.failed { background: #cf222e; }
-    .trend-label { font-size: 0.65rem; color: #656d76; }
+    /* Progress bars */
+    .env-list { display: flex; flex-direction: column; gap: 12px; }
+    .env-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 8px 12px; background: rgba(123,104,238,0.06); border-radius: 6px; }
+    .env-key { color: var(--text-muted); }
+    .env-val { color: #fff; font-weight: 500; }
 
-    /* Suites Section */
-    .suites-section { margin-bottom: 30px; }
-    .suites-section h2 {
-      font-size: 1.2rem; color: #24292f; margin-bottom: 16px;
-      padding-bottom: 8px; border-bottom: 2px solid #d0d7de;
-    }
-    .suite {
-      background: #fff; border: 1px solid #d0d7de; border-radius: 10px;
-      margin-bottom: 12px; overflow: hidden;
-    }
-    .suite-header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 14px 20px; cursor: pointer; user-select: none;
-      transition: background 0.15s;
-    }
-    .suite-header:hover { background: #f6f8fa; }
-    .suite-header .left { display: flex; align-items: center; gap: 10px; }
-    .suite-header .arrow { transition: transform 0.2s; font-size: 0.8rem; color: #656d76; }
-    .suite-header .arrow.open { transform: rotate(90deg); }
-    .suite-header h3 { font-size: 0.95rem; font-weight: 600; }
-    .suite-header .right { display: flex; gap: 8px; align-items: center; }
-    .mini-bar {
-      width: 100px; height: 6px; background: #eaeef2; border-radius: 3px;
-      overflow: hidden; display: flex;
-    }
-    .mini-bar .seg { height: 100%; }
-    .mini-bar .seg.passed { background: #1a7f37; }
-    .mini-bar .seg.failed { background: #cf222e; }
-    .count-badge {
-      font-size: 0.75rem; padding: 2px 8px; border-radius: 10px;
-      font-weight: 600;
-    }
-    .count-badge.passed { background: #dafbe1; color: #1a7f37; }
-    .count-badge.failed { background: #ffebe9; color: #cf222e; }
+    /* Suites Table */
+    .suites-section { margin-bottom: 32px; }
+    .suites-section h3 { font-size: 1rem; color: #fff; margin-bottom: 16px; }
+    .suite { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
+    .suite-header { display: flex; align-items: center; padding: 14px 20px; cursor: pointer; user-select: none; transition: background 0.2s; }
+    .suite-header:hover { background: rgba(123,104,238,0.08); }
+    .suite-toggle { font-size: 0.8rem; color: var(--text-muted); margin-right: 12px; transition: transform 0.2s; }
+    .suite-header.open .suite-toggle { transform: rotate(90deg); }
+    .suite-name { flex: 1; font-weight: 600; font-size: 0.9rem; }
+    .suite-stats { display: flex; gap: 8px; align-items: center; }
+    .suite-badge { font-size: 0.75rem; padding: 2px 10px; border-radius: 10px; font-weight: 600; }
+    .suite-badge.p { background: rgba(151,204,100,0.15); color: var(--passed); }
+    .suite-badge.f { background: rgba(253,90,62,0.15); color: var(--failed); }
+    .suite-body { display: none; border-top: 1px solid var(--border); }
+    .suite-header.open + .suite-body { display: block; }
+    .tc-row { display: flex; align-items: center; padding: 10px 20px 10px 48px; font-size: 0.85rem; border-bottom: 1px solid rgba(42,58,92,0.5); transition: background 0.15s; }
+    .tc-row:last-child { border-bottom: none; }
+    .tc-row:hover { background: rgba(123,104,238,0.05); }
+    .tc-status { width: 10px; height: 10px; border-radius: 50%; margin-right: 12px; flex-shrink: 0; }
+    .tc-status.passed { background: var(--passed); }
+    .tc-status.failed { background: var(--failed); }
+    .tc-status.broken { background: var(--broken); }
+    .tc-status.skipped { background: var(--skipped); }
+    .tc-name { flex: 1; }
+    .tc-tags { display: flex; gap: 4px; margin-right: 16px; }
+    .tc-tag { font-size: 0.65rem; padding: 1px 6px; border-radius: 4px; background: rgba(123,104,238,0.15); color: var(--accent); }
+    .tc-duration { color: var(--text-muted); font-size: 0.8rem; min-width: 60px; text-align: right; }
+    .tc-retry { font-size: 0.65rem; color: var(--broken); margin-right: 8px; }
 
-    .suite-body { display: none; border-top: 1px solid #eaeef2; }
-    .suite-body.open { display: block; }
-
-    .test-row {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 10px 20px 10px 44px; border-bottom: 1px solid #f0f3f6;
-      font-size: 0.88rem; transition: background 0.1s;
-    }
-    .test-row:last-child { border-bottom: none; }
-    .test-row:hover { background: #f6f8fa; }
-    .test-row .left { display: flex; align-items: center; gap: 8px; }
-    .test-row .right { display: flex; align-items: center; gap: 12px; }
-
-    .status-icon { width: 18px; height: 18px; border-radius: 50%; display: flex;
-      align-items: center; justify-content: center; font-size: 0.7rem; color: #fff; flex-shrink: 0; }
-    .status-icon.passed { background: #1a7f37; }
-    .status-icon.failed { background: #cf222e; }
-    .status-icon.skipped { background: #bf8700; }
-
-    .tag {
-      display: inline-block; padding: 2px 8px; border-radius: 10px;
-      font-size: 0.7rem; font-weight: 500;
-    }
-    .tag.smoke { background: #dafbe1; color: #1a7f37; }
-    .tag.auth { background: #ddf4ff; color: #0969da; }
-    .tag.cart { background: #fbefff; color: #8250df; }
-    .tag.checkout { background: #fff8c5; color: #9a6700; }
-    .tag.products { background: #ddf4ff; color: #0969da; }
-    .tag.regression { background: #fbefff; color: #8250df; }
-    .tag.ui { background: #dafbe1; color: #1a7f37; }
-
-    .duration-text { font-size: 0.8rem; color: #656d76; min-width: 50px; text-align: right; }
-
-    /* Environment */
-    .env-section {
-      background: #fff; border: 1px solid #d0d7de; border-radius: 10px;
-      padding: 20px; margin-bottom: 30px;
-    }
-    .env-section h3 { font-size: 1rem; margin-bottom: 12px; }
-    .env-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 8px;
-    }
-    .env-item {
-      display: flex; justify-content: space-between; padding: 6px 10px;
-      background: #f6f8fa; border-radius: 6px; font-size: 0.82rem;
-    }
-    .env-item .key { color: #656d76; }
-    .env-item .val { font-weight: 600; color: #24292f; }
-
-    .back-link {
-      display: inline-flex; align-items: center; gap: 6px;
-      color: #656d76; font-size: 0.85rem; text-decoration: none; margin-bottom: 20px;
-    }
-    .back-link:hover { color: #0969da; }
-
-    @media (max-width: 768px) {
+    /* Responsive */
+    @media (max-width: 900px) {
       .sidebar { display: none; }
-      .main { margin-left: 0; padding: 20px; }
+      .main { margin-left: 0; }
+      .chart-section { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <!-- Sidebar -->
-  <div class="sidebar">
+  <aside class="sidebar">
     <div class="sidebar-header">
-      <div class="sidebar-logo">A</div>
-      <h2>Allure Report</h2>
+      <h2><span class="allure-icon">A</span> Allure Report</h2>
+      <div class="meta">Generated Feb 11, 2026 &bull; Chromium</div>
     </div>
     <nav>
-      <a href="#overview" class="active"><span class="icon">📊</span> Overview</a>
-      <a href="#suites"><span class="icon">📁</span> Suites</a>
-      <a href="#environment"><span class="icon">🖥️</span> Environment</a>
-      <a href="index.html"><span class="icon">🏠</span> Home</a>
+      <div class="nav-item active"><span class="icon">📊</span> Overview</div>
+      <div class="nav-item" onclick="document.getElementById('suites').scrollIntoView({behavior:'smooth'})"><span class="icon">📁</span> Suites</div>
+      <div class="nav-item" onclick="document.getElementById('env').scrollIntoView({behavior:'smooth'})"><span class="icon">⚙️</span> Environment</div>
+      <div class="nav-item" onclick="window.open('https://github.com/wbandara-tech/playwright_ecommerce','_blank')"><span class="icon">🔗</span> Repository</div>
+      <div class="nav-item" onclick="window.open('https://github.com/wbandara-tech/playwright_ecommerce/actions','_blank')"><span class="icon">🚀</span> CI Pipeline</div>
     </nav>
-  </div>
+    <div class="sidebar-footer">
+      Powered by <a href="https://allurereport.org" target="_blank">Allure Framework</a><br>
+      Playwright + TypeScript
+    </div>
+  </aside>
 
-  <!-- Main Content -->
   <div class="main">
-    <a href="index.html" class="back-link">← Back to Home</a>
-
-    <div class="header-bar" id="overview">
-      <h1>📊 Allure Test Report</h1>
-      <div class="meta">
-        <span>🕐 Generated: <script>document.write(new Date().toLocaleDateString('en-US', {year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}))</script></span>
-        <span>🔄 Run #1</span>
-      </div>
+    <div class="topbar">
+      <h1>Test Execution Report</h1>
+      <a href="index.html" class="back-link">← Back to Dashboard</a>
     </div>
+    <div class="content">
 
-    <!-- Overview Cards -->
-    <div class="overview-grid">
-      <div class="overview-card total"><div class="value">26</div><div class="label">Total Tests</div></div>
-      <div class="overview-card passed"><div class="value">24</div><div class="label">Passed</div></div>
-      <div class="overview-card failed"><div class="value">1</div><div class="label">Failed</div></div>
-      <div class="overview-card skipped"><div class="value">1</div><div class="label">Skipped</div></div>
-      <div class="overview-card duration"><div class="value">4m 32s</div><div class="label">Duration</div></div>
-    </div>
+      <!-- Overview Cards -->
+      <div class="overview-cards">
+        <div class="ov-card total"><div class="value">26</div><div class="label">Total Tests</div></div>
+        <div class="ov-card passed"><div class="value">11</div><div class="label">Passed</div></div>
+        <div class="ov-card failed"><div class="value">15</div><div class="label">Failed</div></div>
+        <div class="ov-card duration"><div class="value">3m 20s</div><div class="label">Duration</div></div>
+      </div>
 
-    <!-- Charts -->
-    <div class="chart-section">
-      <div class="donut-container">
-        <h3>Pass Rate</h3>
-        <div class="donut-wrap">
-          <svg width="200" height="200" viewBox="0 0 200 200">
-            <circle cx="100" cy="100" r="80" fill="none" stroke="#eaeef2" stroke-width="24"/>
-            <circle cx="100" cy="100" r="80" fill="none" stroke="#1a7f37" stroke-width="24"
-              stroke-dasharray="464.96 502.65" stroke-linecap="round"/>
-            <circle cx="100" cy="100" r="80" fill="none" stroke="#cf222e" stroke-width="24"
-              stroke-dasharray="19.37 502.65" stroke-dashoffset="-464.96" stroke-linecap="round"/>
-            <circle cx="100" cy="100" r="80" fill="none" stroke="#bf8700" stroke-width="24"
-              stroke-dasharray="19.37 502.65" stroke-dashoffset="-484.33" stroke-linecap="round"/>
-          </svg>
-          <div class="donut-center">
-            <div class="pct">92.3%</div>
-            <div class="pct-label">passed</div>
+      <!-- Charts -->
+      <div class="chart-section">
+        <div class="chart-card">
+          <h3>Status Distribution</h3>
+          <div class="donut-container">
+            <div class="donut-wrapper">
+              <svg viewBox="0 0 42 42" width="180" height="180">
+                <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="var(--passed)" stroke-width="5" stroke-dasharray="42.31 57.69" stroke-dashoffset="25"></circle>
+                <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="var(--failed)" stroke-width="5" stroke-dasharray="57.69 42.31" stroke-dashoffset="82.69"></circle>
+              </svg>
+              <div class="donut-center">
+                <div class="pct">42.3%</div>
+                <div class="sub">pass rate</div>
+              </div>
+            </div>
+            <div class="legend">
+              <div class="legend-item"><span class="legend-dot" style="background:var(--passed)"></span> Passed <span class="legend-count">11</span></div>
+              <div class="legend-item"><span class="legend-dot" style="background:var(--failed)"></span> Failed <span class="legend-count">15</span></div>
+              <div class="legend-item"><span class="legend-dot" style="background:var(--skipped)"></span> Skipped <span class="legend-count">0</span></div>
+              <div class="legend-item"><span class="legend-dot" style="background:var(--broken)"></span> Broken <span class="legend-count">0</span></div>
+            </div>
           </div>
         </div>
-        <div class="legend">
-          <div class="legend-item"><div class="legend-dot" style="background:#1a7f37"></div> Passed (24)</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#cf222e"></div> Failed (1)</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#bf8700"></div> Skipped (1)</div>
+
+        <div class="chart-card" id="env">
+          <h3>Environment</h3>
+          <div class="env-list">
+            <div class="env-row"><span class="env-key">Browser</span><span class="env-val">Chromium</span></div>
+            <div class="env-row"><span class="env-key">Framework</span><span class="env-val">Playwright 1.49+</span></div>
+            <div class="env-row"><span class="env-key">Language</span><span class="env-val">TypeScript 5.7</span></div>
+            <div class="env-row"><span class="env-key">Node.js</span><span class="env-val">20.x</span></div>
+            <div class="env-row"><span class="env-key">OS</span><span class="env-val">Windows</span></div>
+            <div class="env-row"><span class="env-key">Base URL</span><span class="env-val">automationexercise.com</span></div>
+            <div class="env-row"><span class="env-key">Retries</span><span class="env-val">1</span></div>
+            <div class="env-row"><span class="env-key">Workers</span><span class="env-val">2</span></div>
+          </div>
         </div>
       </div>
 
-      <div class="trend-container">
-        <h3>Test Execution Trend</h3>
-        <div class="trend-bars">
-          <div class="trend-bar-group">
-            <div class="trend-bar passed" style="height:100px"></div>
-            <div class="trend-bar failed" style="height:12px"></div>
-            <div class="trend-label">Run 1</div>
-          </div>
-          <div class="trend-bar-group">
-            <div class="trend-bar passed" style="height:110px"></div>
-            <div class="trend-bar failed" style="height:8px"></div>
-            <div class="trend-label">Run 2</div>
-          </div>
-          <div class="trend-bar-group">
-            <div class="trend-bar passed" style="height:120px"></div>
-            <div class="trend-bar failed" style="height:6px"></div>
-            <div class="trend-label">Run 3</div>
-          </div>
-          <div class="trend-bar-group">
-            <div class="trend-bar passed" style="height:115px"></div>
-            <div class="trend-bar failed" style="height:10px"></div>
-            <div class="trend-label">Run 4</div>
-          </div>
-          <div class="trend-bar-group">
-            <div class="trend-bar passed" style="height:130px"></div>
-            <div class="trend-bar failed" style="height:5px"></div>
-            <div class="trend-label">Run 5</div>
-          </div>
-          <div class="trend-bar-group">
-            <div class="trend-bar passed" style="height:125px"></div>
-            <div class="trend-bar failed" style="height:8px"></div>
-            <div class="trend-label">Run 6</div>
-          </div>
-          <div class="trend-bar-group">
-            <div class="trend-bar passed" style="height:135px"></div>
-            <div class="trend-bar failed" style="height:4px"></div>
-            <div class="trend-label">Latest</div>
-          </div>
-        </div>
-        <div class="legend" style="margin-top:16px">
-          <div class="legend-item"><div class="legend-dot" style="background:#1a7f37"></div> Passed</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#cf222e"></div> Failed</div>
-        </div>
-      </div>
-    </div>
+      <!-- Suites -->
+      <div class="suites-section" id="suites">
+        <h3>Test Suites (12)</h3>
 
-    <!-- Suites -->
-    <div class="suites-section" id="suites">
-      <h2>Test Suites</h2>
-
-      <!-- Auth Suite -->
-      <div class="suite">
-        <div class="suite-header" onclick="toggleSuite(this)">
-          <div class="left">
-            <span class="arrow">▶</span>
-            <h3>🔐 Authentication</h3>
+        <!-- Auth - Logout -->
+        <div class="suite">
+          <div class="suite-header" onclick="this.classList.toggle('open')">
+            <span class="suite-toggle">▶</span>
+            <span class="suite-name">auth / logout.spec.ts</span>
+            <div class="suite-stats"><span class="suite-badge f">0 / 1</span></div>
           </div>
-          <div class="right">
-            <div class="mini-bar"><div class="seg passed" style="width:100%"></div></div>
-            <span class="count-badge passed">5 passed</span>
+          <div class="suite-body">
+            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC04 - Logout user successfully</span><span class="tc-tags"><span class="tc-tag">auth</span><span class="tc-tag">regression</span></span><span class="tc-retry">↻1</span><span class="tc-duration">8.1s</span></div>
           </div>
         </div>
-        <div class="suite-body">
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC01 - Register new user successfully</div><div class="right"><span class="tag smoke">@smoke</span><span class="tag auth">@auth</span><span class="duration-text">12.4s</span></div></div>
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC02 - Login with correct credentials</div><div class="right"><span class="tag smoke">@smoke</span><span class="tag auth">@auth</span><span class="duration-text">8.2s</span></div></div>
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC03 - Login with incorrect credentials shows error</div><div class="right"><span class="tag smoke">@smoke</span><span class="tag auth">@auth</span><span class="duration-text">3.1s</span></div></div>
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC04 - Logout user successfully</div><div class="right"><span class="tag auth">@auth</span><span class="duration-text">9.8s</span></div></div>
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC05 - Register with existing email shows error</div><div class="right"><span class="tag auth">@auth</span><span class="duration-text">14.6s</span></div></div>
-        </div>
-      </div>
 
-      <!-- Contact Suite -->
-      <div class="suite">
-        <div class="suite-header" onclick="toggleSuite(this)">
-          <div class="left"><span class="arrow">▶</span><h3>📧 Contact Us</h3></div>
-          <div class="right">
-            <div class="mini-bar"><div class="seg passed" style="width:100%"></div></div>
-            <span class="count-badge passed">1 passed</span>
+        <!-- Auth - Login -->
+        <div class="suite">
+          <div class="suite-header" onclick="this.classList.toggle('open')">
+            <span class="suite-toggle">▶</span>
+            <span class="suite-name">auth / login.spec.ts</span>
+            <div class="suite-stats"><span class="suite-badge p">1</span><span class="suite-badge f">1</span></div>
+          </div>
+          <div class="suite-body">
+            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC02 - Login with correct credentials</span><span class="tc-tags"><span class="tc-tag">smoke</span><span class="tc-tag">auth</span></span><span class="tc-retry">↻1</span><span class="tc-duration">8.0s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC03 - Login with incorrect credentials shows error</span><span class="tc-tags"><span class="tc-tag">smoke</span><span class="tc-tag">auth</span></span><span class="tc-duration">4.5s</span></div>
           </div>
         </div>
-        <div class="suite-body">
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC06 - Submit Contact Us form successfully</div><div class="right"><span class="tag regression">@regression</span><span class="duration-text">6.3s</span></div></div>
-        </div>
-      </div>
 
-      <!-- Products Suite -->
-      <div class="suite">
-        <div class="suite-header" onclick="toggleSuite(this)">
-          <div class="left"><span class="arrow">▶</span><h3>🔍 Products</h3></div>
-          <div class="right">
-            <div class="mini-bar"><div class="seg passed" style="width:83%"></div><div class="seg failed" style="width:17%"></div></div>
-            <span class="count-badge passed">5 passed</span>
-            <span class="count-badge failed">1 failed</span>
+        <!-- Auth - Register -->
+        <div class="suite">
+          <div class="suite-header" onclick="this.classList.toggle('open')">
+            <span class="suite-toggle">▶</span>
+            <span class="suite-name">auth / register.spec.ts</span>
+            <div class="suite-stats"><span class="suite-badge p">1</span><span class="suite-badge f">1</span></div>
+          </div>
+          <div class="suite-body">
+            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC01 - Register new user successfully</span><span class="tc-tags"><span class="tc-tag">smoke</span><span class="tc-tag">auth</span></span><span class="tc-retry">↻1</span><span class="tc-duration">5.9s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC05 - Register with existing email shows error</span><span class="tc-tags"><span class="tc-tag">auth</span></span><span class="tc-duration">9.3s</span></div>
           </div>
         </div>
-        <div class="suite-body">
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC07 - Navigate to Test Cases page</div><div class="right"><span class="tag products">@products</span><span class="duration-text">2.1s</span></div></div>
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC08 - Verify All Products and product detail page</div><div class="right"><span class="tag smoke">@smoke</span><span class="tag products">@products</span><span class="duration-text">5.7s</span></div></div>
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC09 - Search for a product</div><div class="right"><span class="tag smoke">@smoke</span><span class="tag products">@products</span><span class="duration-text">4.3s</span></div></div>
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC18 - View category products</div><div class="right"><span class="tag products">@products</span><span class="duration-text">6.8s</span></div></div>
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC19 - View and cart brand products</div><div class="right"><span class="tag products">@products</span><span class="duration-text">7.2s</span></div></div>
-          <div class="test-row" style="background:#fff5f5"><div class="left"><span class="status-icon failed">✗</span> TC21 - Add review on product</div><div class="right"><span class="tag products">@products</span><span class="duration-text" style="color:#cf222e">timeout</span></div></div>
-        </div>
-      </div>
 
-      <!-- Search Suite -->
-      <div class="suite">
-        <div class="suite-header" onclick="toggleSuite(this)">
-          <div class="left"><span class="arrow">▶</span><h3>🔎 Search</h3></div>
-          <div class="right">
-            <div class="mini-bar"><div class="seg passed" style="width:100%"></div></div>
-            <span class="count-badge passed">1 passed</span>
+        <!-- Cart -->
+        <div class="suite">
+          <div class="suite-header" onclick="this.classList.toggle('open')">
+            <span class="suite-toggle">▶</span>
+            <span class="suite-name">cart / cart.spec.ts</span>
+            <div class="suite-stats"><span class="suite-badge p">2</span><span class="suite-badge f">2</span></div>
+          </div>
+          <div class="suite-body">
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC12 - Add multiple products to cart</span><span class="tc-tags"><span class="tc-tag">smoke</span><span class="tc-tag">cart</span></span><span class="tc-duration">6.2s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC13 - Verify product quantity in cart</span><span class="tc-tags"><span class="tc-tag">cart</span></span><span class="tc-duration">5.0s</span></div>
+            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC17 - Remove products from cart</span><span class="tc-tags"><span class="tc-tag">cart</span></span><span class="tc-retry">↻1</span><span class="tc-duration">8.4s</span></div>
+            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC22 - Add to cart from recommended items</span><span class="tc-tags"><span class="tc-tag">cart</span></span><span class="tc-retry">↻1</span><span class="tc-duration">7.2s</span></div>
           </div>
         </div>
-        <div class="suite-body">
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC20 - Search products and verify cart after login</div><div class="right"><span class="tag products">@products</span><span class="duration-text">18.4s</span></div></div>
-        </div>
-      </div>
 
-      <!-- Subscription Suite -->
-      <div class="suite">
-        <div class="suite-header" onclick="toggleSuite(this)">
-          <div class="left"><span class="arrow">▶</span><h3>📬 Subscription</h3></div>
-          <div class="right">
-            <div class="mini-bar"><div class="seg passed" style="width:100%"></div></div>
-            <span class="count-badge passed">2 passed</span>
+        <!-- Checkout - Address Verification -->
+        <div class="suite">
+          <div class="suite-header" onclick="this.classList.toggle('open')">
+            <span class="suite-toggle">▶</span>
+            <span class="suite-name">checkout / address-verification.spec.ts</span>
+            <div class="suite-stats"><span class="suite-badge f">0 / 1</span></div>
+          </div>
+          <div class="suite-body">
+            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC23 - Verify address details in checkout page</span><span class="tc-tags"><span class="tc-tag">checkout</span></span><span class="tc-retry">↻1</span><span class="tc-duration">7.0s</span></div>
           </div>
         </div>
-        <div class="suite-body">
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC10 - Subscribe from home page</div><div class="right"><span class="tag smoke">@smoke</span><span class="duration-text">3.5s</span></div></div>
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC11 - Subscribe from cart page</div><div class="right"><span class="tag regression">@regression</span><span class="duration-text">4.1s</span></div></div>
-        </div>
-      </div>
 
-      <!-- Cart Suite -->
-      <div class="suite">
-        <div class="suite-header" onclick="toggleSuite(this)">
-          <div class="left"><span class="arrow">▶</span><h3>🛒 Cart</h3></div>
-          <div class="right">
-            <div class="mini-bar"><div class="seg passed" style="width:75%"></div><div class="seg" style="width:25%; background:#bf8700"></div></div>
-            <span class="count-badge passed">3 passed</span>
-            <span class="count-badge" style="background:#fff8c5;color:#9a6700">1 skipped</span>
+        <!-- Checkout - Download Invoice -->
+        <div class="suite">
+          <div class="suite-header" onclick="this.classList.toggle('open')">
+            <span class="suite-toggle">▶</span>
+            <span class="suite-name">checkout / download-invoice.spec.ts</span>
+            <div class="suite-stats"><span class="suite-badge f">0 / 1</span></div>
+          </div>
+          <div class="suite-body">
+            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC24 - Download invoice after purchase order</span><span class="tc-tags"><span class="tc-tag">checkout</span></span><span class="tc-retry">↻1</span><span class="tc-duration">8.9s</span></div>
           </div>
         </div>
-        <div class="suite-body">
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC12 - Add multiple products to cart</div><div class="right"><span class="tag smoke">@smoke</span><span class="tag cart">@cart</span><span class="duration-text">8.9s</span></div></div>
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC13 - Verify product quantity in cart</div><div class="right"><span class="tag cart">@cart</span><span class="duration-text">6.4s</span></div></div>
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC17 - Remove products from cart</div><div class="right"><span class="tag cart">@cart</span><span class="duration-text">7.1s</span></div></div>
-          <div class="test-row" style="background:#fffbeb"><div class="left"><span class="status-icon skipped">⊘</span> TC22 - Add to cart from recommended items</div><div class="right"><span class="tag cart">@cart</span><span class="duration-text" style="color:#bf8700">skipped</span></div></div>
-        </div>
-      </div>
 
-      <!-- Checkout Suite -->
-      <div class="suite">
-        <div class="suite-header" onclick="toggleSuite(this)">
-          <div class="left"><span class="arrow">▶</span><h3>💳 Checkout</h3></div>
-          <div class="right">
-            <div class="mini-bar"><div class="seg passed" style="width:100%"></div></div>
-            <span class="count-badge passed">5 passed</span>
+        <!-- Checkout - Place Order -->
+        <div class="suite">
+          <div class="suite-header" onclick="this.classList.toggle('open')">
+            <span class="suite-toggle">▶</span>
+            <span class="suite-name">checkout / place-order.spec.ts</span>
+            <div class="suite-stats"><span class="suite-badge f">0 / 3</span></div>
+          </div>
+          <div class="suite-body">
+            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC14 - Place order: Register while checkout</span><span class="tc-tags"><span class="tc-tag">smoke</span><span class="tc-tag">checkout</span></span><span class="tc-retry">↻1</span><span class="tc-duration">9.9s</span></div>
+            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC15 - Place order: Register before checkout</span><span class="tc-tags"><span class="tc-tag">checkout</span></span><span class="tc-retry">↻1</span><span class="tc-duration">7.8s</span></div>
+            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC16 - Place order: Login before checkout</span><span class="tc-tags"><span class="tc-tag">checkout</span></span><span class="tc-retry">↻1</span><span class="tc-duration">6.4s</span></div>
           </div>
         </div>
-        <div class="suite-body">
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC14 - Place order: Register while checkout</div><div class="right"><span class="tag smoke">@smoke</span><span class="tag checkout">@checkout</span><span class="duration-text">22.1s</span></div></div>
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC15 - Place order: Register before checkout</div><div class="right"><span class="tag checkout">@checkout</span><span class="duration-text">20.3s</span></div></div>
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC16 - Place order: Login before checkout</div><div class="right"><span class="tag checkout">@checkout</span><span class="duration-text">18.7s</span></div></div>
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC23 - Verify address details in checkout page</div><div class="right"><span class="tag checkout">@checkout</span><span class="duration-text">15.2s</span></div></div>
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC24 - Download invoice after purchase order</div><div class="right"><span class="tag checkout">@checkout</span><span class="duration-text">24.6s</span></div></div>
-        </div>
-      </div>
 
-      <!-- UI Suite -->
-      <div class="suite">
-        <div class="suite-header" onclick="toggleSuite(this)">
-          <div class="left"><span class="arrow">▶</span><h3>🎨 UI / Scroll</h3></div>
-          <div class="right">
-            <div class="mini-bar"><div class="seg passed" style="width:100%"></div></div>
-            <span class="count-badge passed">2 passed</span>
+        <!-- Contact Us -->
+        <div class="suite">
+          <div class="suite-header" onclick="this.classList.toggle('open')">
+            <span class="suite-toggle">▶</span>
+            <span class="suite-name">contact / contact-us.spec.ts</span>
+            <div class="suite-stats"><span class="suite-badge f">0 / 1</span></div>
+          </div>
+          <div class="suite-body">
+            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC06 - Submit Contact Us form successfully</span><span class="tc-tags"><span class="tc-tag">regression</span></span><span class="tc-retry">↻1</span><span class="tc-duration">6.5s</span></div>
           </div>
         </div>
-        <div class="suite-body">
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC25 - Scroll up using arrow button</div><div class="right"><span class="tag ui">@ui</span><span class="duration-text">2.8s</span></div></div>
-          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC26 - Scroll up without arrow button</div><div class="right"><span class="tag ui">@ui</span><span class="duration-text">2.5s</span></div></div>
+
+        <!-- Products -->
+        <div class="suite">
+          <div class="suite-header" onclick="this.classList.toggle('open')">
+            <span class="suite-toggle">▶</span>
+            <span class="suite-name">products / products.spec.ts</span>
+            <div class="suite-stats"><span class="suite-badge p">4</span><span class="suite-badge f">2</span></div>
+          </div>
+          <div class="suite-body">
+            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC07 - Navigate to Test Cases page</span><span class="tc-tags"><span class="tc-tag">products</span></span><span class="tc-retry">↻1</span><span class="tc-duration">4.0s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC08 - Verify All Products and product detail page</span><span class="tc-tags"><span class="tc-tag">smoke</span><span class="tc-tag">products</span></span><span class="tc-duration">5.3s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC09 - Search for a product</span><span class="tc-tags"><span class="tc-tag">smoke</span><span class="tc-tag">products</span></span><span class="tc-duration">4.4s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC18 - View category products</span><span class="tc-tags"><span class="tc-tag">products</span></span><span class="tc-duration">7.3s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC19 - View and cart brand products</span><span class="tc-tags"><span class="tc-tag">products</span></span><span class="tc-duration">7.0s</span></div>
+            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC21 - Add review on product</span><span class="tc-tags"><span class="tc-tag">products</span></span><span class="tc-retry">↻1</span><span class="tc-duration">10.4s</span></div>
+          </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Environment -->
-    <div class="env-section" id="environment">
-      <h3>🖥️ Environment</h3>
-      <div class="env-grid">
-        <div class="env-item"><span class="key">Browser</span><span class="val">Chromium 131</span></div>
-        <div class="env-item"><span class="key">OS</span><span class="val">Ubuntu 22.04</span></div>
-        <div class="env-item"><span class="key">Node.js</span><span class="val">v20.11.0</span></div>
-        <div class="env-item"><span class="key">Playwright</span><span class="val">1.49.0</span></div>
-        <div class="env-item"><span class="key">Base URL</span><span class="val">automationexercise.com</span></div>
-        <div class="env-item"><span class="key">CI</span><span class="val">GitHub Actions</span></div>
-        <div class="env-item"><span class="key">Reporter</span><span class="val">Allure + HTML</span></div>
-        <div class="env-item"><span class="key">Workers</span><span class="val">4 parallel</span></div>
-      </div>
-    </div>
+        <!-- Products - Search -->
+        <div class="suite">
+          <div class="suite-header" onclick="this.classList.toggle('open')">
+            <span class="suite-toggle">▶</span>
+            <span class="suite-name">products / search.spec.ts</span>
+            <div class="suite-stats"><span class="suite-badge f">0 / 1</span></div>
+          </div>
+          <div class="suite-body">
+            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC20 - Search products and verify cart after login</span><span class="tc-tags"><span class="tc-tag">products</span></span><span class="tc-retry">↻1</span><span class="tc-duration">6.7s</span></div>
+          </div>
+        </div>
 
-    <div style="text-align:center; padding: 20px 0; color: #8b949e; font-size: 0.8rem;">
-      Generated by <strong>Allure Framework</strong> · Playwright E-Commerce Automation ·
-      <a href="https://github.com/wbandara-tech/playwright_ecommerce">GitHub</a>
-    </div>
-  </div>
+        <!-- Subscription -->
+        <div class="suite">
+          <div class="suite-header" onclick="this.classList.toggle('open')">
+            <span class="suite-toggle">▶</span>
+            <span class="suite-name">subscription / subscription.spec.ts</span>
+            <div class="suite-stats"><span class="suite-badge p">1</span><span class="suite-badge f">1</span></div>
+          </div>
+          <div class="suite-body">
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC10 - Subscribe from home page</span><span class="tc-tags"><span class="tc-tag">smoke</span></span><span class="tc-duration">5.0s</span></div>
+            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC11 - Subscribe from cart page</span><span class="tc-tags"><span class="tc-tag">regression</span></span><span class="tc-retry">↻1</span><span class="tc-duration">5.4s</span></div>
+          </div>
+        </div>
 
-  <script>
-    function toggleSuite(header) {
-      const body = header.nextElementSibling;
-      const arrow = header.querySelector('.arrow');
-      body.classList.toggle('open');
-      arrow.classList.toggle('open');
-    }
-    // Smooth scroll for sidebar nav
-    document.querySelectorAll('.sidebar nav a[href^="#"]').forEach(a => {
-      a.addEventListener('click', e => {
-        e.preventDefault();
-        document.querySelector(a.getAttribute('href'))?.scrollIntoView({behavior:'smooth'});
-        document.querySelectorAll('.sidebar nav a').forEach(l => l.classList.remove('active'));
-        a.classList.add('active');
-      });
-    });
-  </script>
+        <!-- UI - Scroll -->
+        <div class="suite">
+          <div class="suite-header" onclick="this.classList.toggle('open')">
+            <span class="suite-toggle">▶</span>
+            <span class="suite-name">ui / scroll.spec.ts</span>
+            <div class="suite-stats"><span class="suite-badge p">2 / 2</span></div>
+          </div>
+          <div class="suite-body">
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC25 - Scroll up using arrow button</span><span class="tc-tags"><span class="tc-tag">ui</span></span><span class="tc-duration">8.1s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC26 - Scroll up without arrow button</span><span class="tc-tags"><span class="tc-tag">ui</span></span><span class="tc-duration">3.6s</span></div>
+          </div>
+        </div>
+
+      </div><!-- /suites-section -->
+    </div><!-- /content -->
+  </div><!-- /main -->
 </body>
 </html>
