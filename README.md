@@ -1,0 +1,1 @@
+# Playwright E-Commerce Automation Framework\n\nInitial setup - full code push incoming.\n
