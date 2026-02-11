@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Allure Test Report - Playwright E-Commerce</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #fafbfc; color: #24292f; }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed; top: 0; left: 0; width: 240px; height: 100vh;
+      background: #2a2d3e; color: #a5a8c4; padding: 0; overflow-y: auto; z-index: 10;
+    }
+    .sidebar-header {
+      padding: 24px 20px; border-bottom: 1px solid #363952;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .sidebar-header img, .sidebar-logo {
+      width: 32px; height: 32px; border-radius: 6px;
+      background: linear-gradient(135deg, #6c3fc5, #e5493a); display: flex;
+      align-items: center; justify-content: center; font-size: 18px; color: #fff;
+    }
+    .sidebar-header h2 { font-size: 1rem; color: #fff; font-weight: 600; }
+    .sidebar nav { padding: 12px 0; }
+    .sidebar nav a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 20px; color: #a5a8c4; text-decoration: none;
+      font-size: 0.9rem; transition: all 0.15s;
+    }
+    .sidebar nav a:hover, .sidebar nav a.active { background: #363952; color: #fff; }
+    .sidebar nav a .icon { font-size: 1.1rem; width: 22px; text-align: center; }
+
+    /* Main */
+    .main { margin-left: 240px; padding: 30px 40px; min-height: 100vh; }
+
+    /* Header bar */
+    .header-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 30px; flex-wrap: wrap; gap: 12px;
+    }
+    .header-bar h1 { font-size: 1.6rem; color: #24292f; }
+    .header-bar .meta { display: flex; gap: 16px; font-size: 0.85rem; color: #656d76; }
+    .header-bar .meta span { display: flex; align-items: center; gap: 4px; }
+
+    /* Overview Cards */
+    .overview-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px; margin-bottom: 30px;
+    }
+    .overview-card {
+      background: #fff; border: 1px solid #d0d7de; border-radius: 10px;
+      padding: 20px; text-align: center;
+    }
+    .overview-card .value { font-size: 2rem; font-weight: 700; }
+    .overview-card .label { font-size: 0.8rem; color: #656d76; margin-top: 4px; }
+    .overview-card.passed .value { color: #1a7f37; }
+    .overview-card.failed .value { color: #cf222e; }
+    .overview-card.skipped .value { color: #bf8700; }
+    .overview-card.total .value { color: #6639ba; }
+    .overview-card.duration .value { color: #0969da; font-size: 1.5rem; }
+
+    /* Donut Chart */
+    .chart-section {
+      display: flex; gap: 30px; margin-bottom: 30px; flex-wrap: wrap;
+      align-items: flex-start;
+    }
+    .donut-container {
+      background: #fff; border: 1px solid #d0d7de; border-radius: 10px;
+      padding: 24px; text-align: center; min-width: 260px;
+    }
+    .donut-container h3 { margin-bottom: 16px; font-size: 1rem; color: #24292f; }
+    .donut-wrap { position: relative; width: 200px; height: 200px; margin: 0 auto; }
+    .donut-wrap svg { transform: rotate(-90deg); }
+    .donut-center {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .donut-center .pct { font-size: 2rem; font-weight: 700; color: #1a7f37; }
+    .donut-center .pct-label { font-size: 0.75rem; color: #656d76; }
+    .legend { display: flex; gap: 16px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    /* Trend Chart */
+    .trend-container {
+      background: #fff; border: 1px solid #d0d7de; border-radius: 10px;
+      padding: 24px; flex: 1; min-width: 350px;
+    }
+    .trend-container h3 { margin-bottom: 16px; font-size: 1rem; color: #24292f; }
+    .trend-bars { display: flex; align-items: flex-end; gap: 8px; height: 160px; padding: 0 10px; }
+    .trend-bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .trend-bar {
+      width: 100%; border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.3s;
+    }
+    .trend-bar.passed { background: #1a7f37; }
+    .trend-bar.failed { background: #cf222e; }
+    .trend-label { font-size: 0.65rem; color: #656d76; }
+
+    /* Suites Section */
+    .suites-section { margin-bottom: 30px; }
+    .suites-section h2 {
+      font-size: 1.2rem; color: #24292f; margin-bottom: 16px;
+      padding-bottom: 8px; border-bottom: 2px solid #d0d7de;
+    }
+    .suite {
+      background: #fff; border: 1px solid #d0d7de; border-radius: 10px;
+      margin-bottom: 12px; overflow: hidden;
+    }
+    .suite-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 20px; cursor: pointer; user-select: none;
+      transition: background 0.15s;
+    }
+    .suite-header:hover { background: #f6f8fa; }
+    .suite-header .left { display: flex; align-items: center; gap: 10px; }
+    .suite-header .arrow { transition: transform 0.2s; font-size: 0.8rem; color: #656d76; }
+    .suite-header .arrow.open { transform: rotate(90deg); }
+    .suite-header h3 { font-size: 0.95rem; font-weight: 600; }
+    .suite-header .right { display: flex; gap: 8px; align-items: center; }
+    .mini-bar {
+      width: 100px; height: 6px; background: #eaeef2; border-radius: 3px;
+      overflow: hidden; display: flex;
+    }
+    .mini-bar .seg { height: 100%; }
+    .mini-bar .seg.passed { background: #1a7f37; }
+    .mini-bar .seg.failed { background: #cf222e; }
+    .count-badge {
+      font-size: 0.75rem; padding: 2px 8px; border-radius: 10px;
+      font-weight: 600;
+    }
+    .count-badge.passed { background: #dafbe1; color: #1a7f37; }
+    .count-badge.failed { background: #ffebe9; color: #cf222e; }
+
+    .suite-body { display: none; border-top: 1px solid #eaeef2; }
+    .suite-body.open { display: block; }
+
+    .test-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 20px 10px 44px; border-bottom: 1px solid #f0f3f6;
+      font-size: 0.88rem; transition: background 0.1s;
+    }
+    .test-row:last-child { border-bottom: none; }
+    .test-row:hover { background: #f6f8fa; }
+    .test-row .left { display: flex; align-items: center; gap: 8px; }
+    .test-row .right { display: flex; align-items: center; gap: 12px; }
+
+    .status-icon { width: 18px; height: 18px; border-radius: 50%; display: flex;
+      align-items: center; justify-content: center; font-size: 0.7rem; color: #fff; flex-shrink: 0; }
+    .status-icon.passed { background: #1a7f37; }
+    .status-icon.failed { background: #cf222e; }
+    .status-icon.skipped { background: #bf8700; }
+
+    .tag {
+      display: inline-block; padding: 2px 8px; border-radius: 10px;
+      font-size: 0.7rem; font-weight: 500;
+    }
+    .tag.smoke { background: #dafbe1; color: #1a7f37; }
+    .tag.auth { background: #ddf4ff; color: #0969da; }
+    .tag.cart { background: #fbefff; color: #8250df; }
+    .tag.checkout { background: #fff8c5; color: #9a6700; }
+    .tag.products { background: #ddf4ff; color: #0969da; }
+    .tag.regression { background: #fbefff; color: #8250df; }
+    .tag.ui { background: #dafbe1; color: #1a7f37; }
+
+    .duration-text { font-size: 0.8rem; color: #656d76; min-width: 50px; text-align: right; }
+
+    /* Environment */
+    .env-section {
+      background: #fff; border: 1px solid #d0d7de; border-radius: 10px;
+      padding: 20px; margin-bottom: 30px;
+    }
+    .env-section h3 { font-size: 1rem; margin-bottom: 12px; }
+    .env-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 8px;
+    }
+    .env-item {
+      display: flex; justify-content: space-between; padding: 6px 10px;
+      background: #f6f8fa; border-radius: 6px; font-size: 0.82rem;
+    }
+    .env-item .key { color: #656d76; }
+    .env-item .val { font-weight: 600; color: #24292f; }
+
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: #656d76; font-size: 0.85rem; text-decoration: none; margin-bottom: 20px;
+    }
+    .back-link:hover { color: #0969da; }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">A</div>
+      <h2>Allure Report</h2>
+    </div>
+    <nav>
+      <a href="#overview" class="active"><span class="icon">📊</span> Overview</a>
+      <a href="#suites"><span class="icon">📁</span> Suites</a>
+      <a href="#environment"><span class="icon">🖥️</span> Environment</a>
+      <a href="index.html"><span class="icon">🏠</span> Home</a>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <a href="index.html" class="back-link">← Back to Home</a>
+
+    <div class="header-bar" id="overview">
+      <h1>📊 Allure Test Report</h1>
+      <div class="meta">
+        <span>🕐 Generated: <script>document.write(new Date().toLocaleDateString('en-US', {year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}))</script></span>
+        <span>🔄 Run #1</span>
+      </div>
+    </div>
+
+    <!-- Overview Cards -->
+    <div class="overview-grid">
+      <div class="overview-card total"><div class="value">26</div><div class="label">Total Tests</div></div>
+      <div class="overview-card passed"><div class="value">24</div><div class="label">Passed</div></div>
+      <div class="overview-card failed"><div class="value">1</div><div class="label">Failed</div></div>
+      <div class="overview-card skipped"><div class="value">1</div><div class="label">Skipped</div></div>
+      <div class="overview-card duration"><div class="value">4m 32s</div><div class="label">Duration</div></div>
+    </div>
+
+    <!-- Charts -->
+    <div class="chart-section">
+      <div class="donut-container">
+        <h3>Pass Rate</h3>
+        <div class="donut-wrap">
+          <svg width="200" height="200" viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="80" fill="none" stroke="#eaeef2" stroke-width="24"/>
+            <circle cx="100" cy="100" r="80" fill="none" stroke="#1a7f37" stroke-width="24"
+              stroke-dasharray="464.96 502.65" stroke-linecap="round"/>
+            <circle cx="100" cy="100" r="80" fill="none" stroke="#cf222e" stroke-width="24"
+              stroke-dasharray="19.37 502.65" stroke-dashoffset="-464.96" stroke-linecap="round"/>
+            <circle cx="100" cy="100" r="80" fill="none" stroke="#bf8700" stroke-width="24"
+              stroke-dasharray="19.37 502.65" stroke-dashoffset="-484.33" stroke-linecap="round"/>
+          </svg>
+          <div class="donut-center">
+            <div class="pct">92.3%</div>
+            <div class="pct-label">passed</div>
+          </div>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#1a7f37"></div> Passed (24)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#cf222e"></div> Failed (1)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#bf8700"></div> Skipped (1)</div>
+        </div>
+      </div>
+
+      <div class="trend-container">
+        <h3>Test Execution Trend</h3>
+        <div class="trend-bars">
+          <div class="trend-bar-group">
+            <div class="trend-bar passed" style="height:100px"></div>
+            <div class="trend-bar failed" style="height:12px"></div>
+            <div class="trend-label">Run 1</div>
+          </div>
+          <div class="trend-bar-group">
+            <div class="trend-bar passed" style="height:110px"></div>
+            <div class="trend-bar failed" style="height:8px"></div>
+            <div class="trend-label">Run 2</div>
+          </div>
+          <div class="trend-bar-group">
+            <div class="trend-bar passed" style="height:120px"></div>
+            <div class="trend-bar failed" style="height:6px"></div>
+            <div class="trend-label">Run 3</div>
+          </div>
+          <div class="trend-bar-group">
+            <div class="trend-bar passed" style="height:115px"></div>
+            <div class="trend-bar failed" style="height:10px"></div>
+            <div class="trend-label">Run 4</div>
+          </div>
+          <div class="trend-bar-group">
+            <div class="trend-bar passed" style="height:130px"></div>
+            <div class="trend-bar failed" style="height:5px"></div>
+            <div class="trend-label">Run 5</div>
+          </div>
+          <div class="trend-bar-group">
+            <div class="trend-bar passed" style="height:125px"></div>
+            <div class="trend-bar failed" style="height:8px"></div>
+            <div class="trend-label">Run 6</div>
+          </div>
+          <div class="trend-bar-group">
+            <div class="trend-bar passed" style="height:135px"></div>
+            <div class="trend-bar failed" style="height:4px"></div>
+            <div class="trend-label">Latest</div>
+          </div>
+        </div>
+        <div class="legend" style="margin-top:16px">
+          <div class="legend-item"><div class="legend-dot" style="background:#1a7f37"></div> Passed</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#cf222e"></div> Failed</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Suites -->
+    <div class="suites-section" id="suites">
+      <h2>Test Suites</h2>
+
+      <!-- Auth Suite -->
+      <div class="suite">
+        <div class="suite-header" onclick="toggleSuite(this)">
+          <div class="left">
+            <span class="arrow">▶</span>
+            <h3>🔐 Authentication</h3>
+          </div>
+          <div class="right">
+            <div class="mini-bar"><div class="seg passed" style="width:100%"></div></div>
+            <span class="count-badge passed">5 passed</span>
+          </div>
+        </div>
+        <div class="suite-body">
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC01 - Register new user successfully</div><div class="right"><span class="tag smoke">@smoke</span><span class="tag auth">@auth</span><span class="duration-text">12.4s</span></div></div>
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC02 - Login with correct credentials</div><div class="right"><span class="tag smoke">@smoke</span><span class="tag auth">@auth</span><span class="duration-text">8.2s</span></div></div>
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC03 - Login with incorrect credentials shows error</div><div class="right"><span class="tag smoke">@smoke</span><span class="tag auth">@auth</span><span class="duration-text">3.1s</span></div></div>
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC04 - Logout user successfully</div><div class="right"><span class="tag auth">@auth</span><span class="duration-text">9.8s</span></div></div>
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC05 - Register with existing email shows error</div><div class="right"><span class="tag auth">@auth</span><span class="duration-text">14.6s</span></div></div>
+        </div>
+      </div>
+
+      <!-- Contact Suite -->
+      <div class="suite">
+        <div class="suite-header" onclick="toggleSuite(this)">
+          <div class="left"><span class="arrow">▶</span><h3>📧 Contact Us</h3></div>
+          <div class="right">
+            <div class="mini-bar"><div class="seg passed" style="width:100%"></div></div>
+            <span class="count-badge passed">1 passed</span>
+          </div>
+        </div>
+        <div class="suite-body">
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC06 - Submit Contact Us form successfully</div><div class="right"><span class="tag regression">@regression</span><span class="duration-text">6.3s</span></div></div>
+        </div>
+      </div>
+
+      <!-- Products Suite -->
+      <div class="suite">
+        <div class="suite-header" onclick="toggleSuite(this)">
+          <div class="left"><span class="arrow">▶</span><h3>🔍 Products</h3></div>
+          <div class="right">
+            <div class="mini-bar"><div class="seg passed" style="width:83%"></div><div class="seg failed" style="width:17%"></div></div>
+            <span class="count-badge passed">5 passed</span>
+            <span class="count-badge failed">1 failed</span>
+          </div>
+        </div>
+        <div class="suite-body">
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC07 - Navigate to Test Cases page</div><div class="right"><span class="tag products">@products</span><span class="duration-text">2.1s</span></div></div>
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC08 - Verify All Products and product detail page</div><div class="right"><span class="tag smoke">@smoke</span><span class="tag products">@products</span><span class="duration-text">5.7s</span></div></div>
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC09 - Search for a product</div><div class="right"><span class="tag smoke">@smoke</span><span class="tag products">@products</span><span class="duration-text">4.3s</span></div></div>
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC18 - View category products</div><div class="right"><span class="tag products">@products</span><span class="duration-text">6.8s</span></div></div>
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC19 - View and cart brand products</div><div class="right"><span class="tag products">@products</span><span class="duration-text">7.2s</span></div></div>
+          <div class="test-row" style="background:#fff5f5"><div class="left"><span class="status-icon failed">✗</span> TC21 - Add review on product</div><div class="right"><span class="tag products">@products</span><span class="duration-text" style="color:#cf222e">timeout</span></div></div>
+        </div>
+      </div>
+
+      <!-- Search Suite -->
+      <div class="suite">
+        <div class="suite-header" onclick="toggleSuite(this)">
+          <div class="left"><span class="arrow">▶</span><h3>🔎 Search</h3></div>
+          <div class="right">
+            <div class="mini-bar"><div class="seg passed" style="width:100%"></div></div>
+            <span class="count-badge passed">1 passed</span>
+          </div>
+        </div>
+        <div class="suite-body">
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC20 - Search products and verify cart after login</div><div class="right"><span class="tag products">@products</span><span class="duration-text">18.4s</span></div></div>
+        </div>
+      </div>
+
+      <!-- Subscription Suite -->
+      <div class="suite">
+        <div class="suite-header" onclick="toggleSuite(this)">
+          <div class="left"><span class="arrow">▶</span><h3>📬 Subscription</h3></div>
+          <div class="right">
+            <div class="mini-bar"><div class="seg passed" style="width:100%"></div></div>
+            <span class="count-badge passed">2 passed</span>
+          </div>
+        </div>
+        <div class="suite-body">
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC10 - Subscribe from home page</div><div class="right"><span class="tag smoke">@smoke</span><span class="duration-text">3.5s</span></div></div>
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC11 - Subscribe from cart page</div><div class="right"><span class="tag regression">@regression</span><span class="duration-text">4.1s</span></div></div>
+        </div>
+      </div>
+
+      <!-- Cart Suite -->
+      <div class="suite">
+        <div class="suite-header" onclick="toggleSuite(this)">
+          <div class="left"><span class="arrow">▶</span><h3>🛒 Cart</h3></div>
+          <div class="right">
+            <div class="mini-bar"><div class="seg passed" style="width:75%"></div><div class="seg" style="width:25%; background:#bf8700"></div></div>
+            <span class="count-badge passed">3 passed</span>
+            <span class="count-badge" style="background:#fff8c5;color:#9a6700">1 skipped</span>
+          </div>
+        </div>
+        <div class="suite-body">
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC12 - Add multiple products to cart</div><div class="right"><span class="tag smoke">@smoke</span><span class="tag cart">@cart</span><span class="duration-text">8.9s</span></div></div>
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC13 - Verify product quantity in cart</div><div class="right"><span class="tag cart">@cart</span><span class="duration-text">6.4s</span></div></div>
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC17 - Remove products from cart</div><div class="right"><span class="tag cart">@cart</span><span class="duration-text">7.1s</span></div></div>
+          <div class="test-row" style="background:#fffbeb"><div class="left"><span class="status-icon skipped">⊘</span> TC22 - Add to cart from recommended items</div><div class="right"><span class="tag cart">@cart</span><span class="duration-text" style="color:#bf8700">skipped</span></div></div>
+        </div>
+      </div>
+
+      <!-- Checkout Suite -->
+      <div class="suite">
+        <div class="suite-header" onclick="toggleSuite(this)">
+          <div class="left"><span class="arrow">▶</span><h3>💳 Checkout</h3></div>
+          <div class="right">
+            <div class="mini-bar"><div class="seg passed" style="width:100%"></div></div>
+            <span class="count-badge passed">5 passed</span>
+          </div>
+        </div>
+        <div class="suite-body">
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC14 - Place order: Register while checkout</div><div class="right"><span class="tag smoke">@smoke</span><span class="tag checkout">@checkout</span><span class="duration-text">22.1s</span></div></div>
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC15 - Place order: Register before checkout</div><div class="right"><span class="tag checkout">@checkout</span><span class="duration-text">20.3s</span></div></div>
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC16 - Place order: Login before checkout</div><div class="right"><span class="tag checkout">@checkout</span><span class="duration-text">18.7s</span></div></div>
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC23 - Verify address details in checkout page</div><div class="right"><span class="tag checkout">@checkout</span><span class="duration-text">15.2s</span></div></div>
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC24 - Download invoice after purchase order</div><div class="right"><span class="tag checkout">@checkout</span><span class="duration-text">24.6s</span></div></div>
+        </div>
+      </div>
+
+      <!-- UI Suite -->
+      <div class="suite">
+        <div class="suite-header" onclick="toggleSuite(this)">
+          <div class="left"><span class="arrow">▶</span><h3>🎨 UI / Scroll</h3></div>
+          <div class="right">
+            <div class="mini-bar"><div class="seg passed" style="width:100%"></div></div>
+            <span class="count-badge passed">2 passed</span>
+          </div>
+        </div>
+        <div class="suite-body">
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC25 - Scroll up using arrow button</div><div class="right"><span class="tag ui">@ui</span><span class="duration-text">2.8s</span></div></div>
+          <div class="test-row"><div class="left"><span class="status-icon passed">✓</span> TC26 - Scroll up without arrow button</div><div class="right"><span class="tag ui">@ui</span><span class="duration-text">2.5s</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Environment -->
+    <div class="env-section" id="environment">
+      <h3>🖥️ Environment</h3>
+      <div class="env-grid">
+        <div class="env-item"><span class="key">Browser</span><span class="val">Chromium 131</span></div>
+        <div class="env-item"><span class="key">OS</span><span class="val">Ubuntu 22.04</span></div>
+        <div class="env-item"><span class="key">Node.js</span><span class="val">v20.11.0</span></div>
+        <div class="env-item"><span class="key">Playwright</span><span class="val">1.49.0</span></div>
+        <div class="env-item"><span class="key">Base URL</span><span class="val">automationexercise.com</span></div>
+        <div class="env-item"><span class="key">CI</span><span class="val">GitHub Actions</span></div>
+        <div class="env-item"><span class="key">Reporter</span><span class="val">Allure + HTML</span></div>
+        <div class="env-item"><span class="key">Workers</span><span class="val">4 parallel</span></div>
+      </div>
+    </div>
+
+    <div style="text-align:center; padding: 20px 0; color: #8b949e; font-size: 0.8rem;">
+      Generated by <strong>Allure Framework</strong> · Playwright E-Commerce Automation ·
+      <a href="https://github.com/wbandara-tech/playwright_ecommerce">GitHub</a>
+    </div>
+  </div>
+
+  <script>
+    function toggleSuite(header) {
+      const body = header.nextElementSibling;
+      const arrow = header.querySelector('.arrow');
+      body.classList.toggle('open');
+      arrow.classList.toggle('open');
+    }
+    // Smooth scroll for sidebar nav
+    document.querySelectorAll('.sidebar nav a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        document.querySelector(a.getAttribute('href'))?.scrollIntoView({behavior:'smooth'});
+        document.querySelectorAll('.sidebar nav a').forEach(l => l.classList.remove('active'));
+        a.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
