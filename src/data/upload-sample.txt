@@ -1,0 +1,3 @@
+This is a sample file used for upload testing in the Contact Us form.
+Automation Exercise - Test Upload File
+Created for E2E testing purposes.
