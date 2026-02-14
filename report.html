@@ -104,7 +104,6 @@
     .tc-tags { display: flex; gap: 4px; margin-right: 16px; }
     .tc-tag { font-size: 0.65rem; padding: 1px 6px; border-radius: 4px; background: rgba(123,104,238,0.15); color: var(--accent); }
     .tc-duration { color: var(--text-muted); font-size: 0.8rem; min-width: 60px; text-align: right; }
-    .tc-retry { font-size: 0.65rem; color: var(--broken); margin-right: 8px; }
 
     /* Responsive */
     @media (max-width: 900px) {
@@ -118,7 +117,7 @@
   <aside class="sidebar">
     <div class="sidebar-header">
       <h2><span class="allure-icon">A</span> Allure Report</h2>
-      <div class="meta">Generated Feb 11, 2026 &bull; Chromium</div>
+      <div class="meta">Generated Feb 14, 2026 &bull; Chromium</div>
     </div>
     <nav>
       <div class="nav-item active"><span class="icon">📊</span> Overview</div>
@@ -143,9 +142,9 @@
       <!-- Overview Cards -->
       <div class="overview-cards">
         <div class="ov-card total"><div class="value">26</div><div class="label">Total Tests</div></div>
-        <div class="ov-card passed"><div class="value">11</div><div class="label">Passed</div></div>
-        <div class="ov-card failed"><div class="value">15</div><div class="label">Failed</div></div>
-        <div class="ov-card duration"><div class="value">3m 20s</div><div class="label">Duration</div></div>
+        <div class="ov-card passed"><div class="value">26</div><div class="label">Passed</div></div>
+        <div class="ov-card failed"><div class="value">0</div><div class="label">Failed</div></div>
+        <div class="ov-card duration"><div class="value">2m 48s</div><div class="label">Duration</div></div>
       </div>
 
       <!-- Charts -->
@@ -155,17 +154,16 @@
           <div class="donut-container">
             <div class="donut-wrapper">
               <svg viewBox="0 0 42 42" width="180" height="180">
-                <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="var(--passed)" stroke-width="5" stroke-dasharray="42.31 57.69" stroke-dashoffset="25"></circle>
-                <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="var(--failed)" stroke-width="5" stroke-dasharray="57.69 42.31" stroke-dashoffset="82.69"></circle>
+                <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="var(--passed)" stroke-width="5" stroke-dasharray="100 0" stroke-dashoffset="25"></circle>
               </svg>
               <div class="donut-center">
-                <div class="pct">42.3%</div>
+                <div class="pct">100%</div>
                 <div class="sub">pass rate</div>
               </div>
             </div>
             <div class="legend">
-              <div class="legend-item"><span class="legend-dot" style="background:var(--passed)"></span> Passed <span class="legend-count">11</span></div>
-              <div class="legend-item"><span class="legend-dot" style="background:var(--failed)"></span> Failed <span class="legend-count">15</span></div>
+              <div class="legend-item"><span class="legend-dot" style="background:var(--passed)"></span> Passed <span class="legend-count">26</span></div>
+              <div class="legend-item"><span class="legend-dot" style="background:var(--failed)"></span> Failed <span class="legend-count">0</span></div>
               <div class="legend-item"><span class="legend-dot" style="background:var(--skipped)"></span> Skipped <span class="legend-count">0</span></div>
               <div class="legend-item"><span class="legend-dot" style="background:var(--broken)"></span> Broken <span class="legend-count">0</span></div>
             </div>
@@ -176,7 +174,7 @@
           <h3>Environment</h3>
           <div class="env-list">
             <div class="env-row"><span class="env-key">Browser</span><span class="env-val">Chromium</span></div>
-            <div class="env-row"><span class="env-key">Framework</span><span class="env-val">Playwright 1.49+</span></div>
+            <div class="env-row"><span class="env-key">Framework</span><span class="env-val">Playwright 1.58.2</span></div>
             <div class="env-row"><span class="env-key">Language</span><span class="env-val">TypeScript 5.7</span></div>
             <div class="env-row"><span class="env-key">Node.js</span><span class="env-val">20.x</span></div>
             <div class="env-row"><span class="env-key">OS</span><span class="env-val">Windows</span></div>
@@ -191,28 +189,28 @@
       <div class="suites-section" id="suites">
         <h3>Test Suites (12)</h3>
 
-        <!-- Auth - Logout -->
-        <div class="suite">
-          <div class="suite-header" onclick="this.classList.toggle('open')">
-            <span class="suite-toggle">▶</span>
-            <span class="suite-name">auth / logout.spec.ts</span>
-            <div class="suite-stats"><span class="suite-badge f">0 / 1</span></div>
-          </div>
-          <div class="suite-body">
-            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC04 - Logout user successfully</span><span class="tc-tags"><span class="tc-tag">auth</span><span class="tc-tag">regression</span></span><span class="tc-retry">↻1</span><span class="tc-duration">8.1s</span></div>
-          </div>
-        </div>
-
         <!-- Auth - Login -->
         <div class="suite">
           <div class="suite-header" onclick="this.classList.toggle('open')">
             <span class="suite-toggle">▶</span>
             <span class="suite-name">auth / login.spec.ts</span>
-            <div class="suite-stats"><span class="suite-badge p">1</span><span class="suite-badge f">1</span></div>
+            <div class="suite-stats"><span class="suite-badge p">2 / 2</span></div>
           </div>
           <div class="suite-body">
-            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC02 - Login with correct credentials</span><span class="tc-tags"><span class="tc-tag">smoke</span><span class="tc-tag">auth</span></span><span class="tc-retry">↻1</span><span class="tc-duration">8.0s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC02 - Login with correct credentials</span><span class="tc-tags"><span class="tc-tag">smoke</span><span class="tc-tag">auth</span></span><span class="tc-duration">16.1s</span></div>
             <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC03 - Login with incorrect credentials shows error</span><span class="tc-tags"><span class="tc-tag">smoke</span><span class="tc-tag">auth</span></span><span class="tc-duration">4.5s</span></div>
+          </div>
+        </div>
+
+        <!-- Auth - Logout -->
+        <div class="suite">
+          <div class="suite-header" onclick="this.classList.toggle('open')">
+            <span class="suite-toggle">▶</span>
+            <span class="suite-name">auth / logout.spec.ts</span>
+            <div class="suite-stats"><span class="suite-badge p">1 / 1</span></div>
+          </div>
+          <div class="suite-body">
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC04 - Logout user successfully</span><span class="tc-tags"><span class="tc-tag">auth</span><span class="tc-tag">regression</span></span><span class="tc-duration">15.7s</span></div>
           </div>
         </div>
 
@@ -221,11 +219,11 @@
           <div class="suite-header" onclick="this.classList.toggle('open')">
             <span class="suite-toggle">▶</span>
             <span class="suite-name">auth / register.spec.ts</span>
-            <div class="suite-stats"><span class="suite-badge p">1</span><span class="suite-badge f">1</span></div>
+            <div class="suite-stats"><span class="suite-badge p">2 / 2</span></div>
           </div>
           <div class="suite-body">
-            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC01 - Register new user successfully</span><span class="tc-tags"><span class="tc-tag">smoke</span><span class="tc-tag">auth</span></span><span class="tc-retry">↻1</span><span class="tc-duration">5.9s</span></div>
-            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC05 - Register with existing email shows error</span><span class="tc-tags"><span class="tc-tag">auth</span></span><span class="tc-duration">9.3s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC01 - Register new user successfully</span><span class="tc-tags"><span class="tc-tag">smoke</span><span class="tc-tag">auth</span></span><span class="tc-duration">8.3s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC05 - Register with existing email shows error</span><span class="tc-tags"><span class="tc-tag">auth</span><span class="tc-tag">regression</span></span><span class="tc-duration">7.4s</span></div>
           </div>
         </div>
 
@@ -234,13 +232,13 @@
           <div class="suite-header" onclick="this.classList.toggle('open')">
             <span class="suite-toggle">▶</span>
             <span class="suite-name">cart / cart.spec.ts</span>
-            <div class="suite-stats"><span class="suite-badge p">2</span><span class="suite-badge f">2</span></div>
+            <div class="suite-stats"><span class="suite-badge p">4 / 4</span></div>
           </div>
           <div class="suite-body">
-            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC12 - Add multiple products to cart</span><span class="tc-tags"><span class="tc-tag">smoke</span><span class="tc-tag">cart</span></span><span class="tc-duration">6.2s</span></div>
-            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC13 - Verify product quantity in cart</span><span class="tc-tags"><span class="tc-tag">cart</span></span><span class="tc-duration">5.0s</span></div>
-            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC17 - Remove products from cart</span><span class="tc-tags"><span class="tc-tag">cart</span></span><span class="tc-retry">↻1</span><span class="tc-duration">8.4s</span></div>
-            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC22 - Add to cart from recommended items</span><span class="tc-tags"><span class="tc-tag">cart</span></span><span class="tc-retry">↻1</span><span class="tc-duration">7.2s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC12 - Add multiple products to cart</span><span class="tc-tags"><span class="tc-tag">smoke</span><span class="tc-tag">cart</span></span><span class="tc-duration">19.5s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC13 - Verify product quantity in cart</span><span class="tc-tags"><span class="tc-tag">cart</span><span class="tc-tag">regression</span></span><span class="tc-duration">10.9s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC17 - Remove products from cart</span><span class="tc-tags"><span class="tc-tag">cart</span><span class="tc-tag">regression</span></span><span class="tc-duration">17.0s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC22 - Add to cart from recommended items</span><span class="tc-tags"><span class="tc-tag">cart</span><span class="tc-tag">regression</span></span><span class="tc-duration">12.6s</span></div>
           </div>
         </div>
 
@@ -249,10 +247,10 @@
           <div class="suite-header" onclick="this.classList.toggle('open')">
             <span class="suite-toggle">▶</span>
             <span class="suite-name">checkout / address-verification.spec.ts</span>
-            <div class="suite-stats"><span class="suite-badge f">0 / 1</span></div>
+            <div class="suite-stats"><span class="suite-badge p">1 / 1</span></div>
           </div>
           <div class="suite-body">
-            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC23 - Verify address details in checkout page</span><span class="tc-tags"><span class="tc-tag">checkout</span></span><span class="tc-retry">↻1</span><span class="tc-duration">7.0s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC23 - Verify address details in checkout page</span><span class="tc-tags"><span class="tc-tag">checkout</span><span class="tc-tag">regression</span></span><span class="tc-duration">21.2s</span></div>
           </div>
         </div>
 
@@ -261,10 +259,10 @@
           <div class="suite-header" onclick="this.classList.toggle('open')">
             <span class="suite-toggle">▶</span>
             <span class="suite-name">checkout / download-invoice.spec.ts</span>
-            <div class="suite-stats"><span class="suite-badge f">0 / 1</span></div>
+            <div class="suite-stats"><span class="suite-badge p">1 / 1</span></div>
           </div>
           <div class="suite-body">
-            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC24 - Download invoice after purchase order</span><span class="tc-tags"><span class="tc-tag">checkout</span></span><span class="tc-retry">↻1</span><span class="tc-duration">8.9s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC24 - Download invoice after purchase order</span><span class="tc-tags"><span class="tc-tag">checkout</span><span class="tc-tag">regression</span></span><span class="tc-duration">26.6s</span></div>
           </div>
         </div>
 
@@ -273,12 +271,12 @@
           <div class="suite-header" onclick="this.classList.toggle('open')">
             <span class="suite-toggle">▶</span>
             <span class="suite-name">checkout / place-order.spec.ts</span>
-            <div class="suite-stats"><span class="suite-badge f">0 / 3</span></div>
+            <div class="suite-stats"><span class="suite-badge p">3 / 3</span></div>
           </div>
           <div class="suite-body">
-            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC14 - Place order: Register while checkout</span><span class="tc-tags"><span class="tc-tag">smoke</span><span class="tc-tag">checkout</span></span><span class="tc-retry">↻1</span><span class="tc-duration">9.9s</span></div>
-            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC15 - Place order: Register before checkout</span><span class="tc-tags"><span class="tc-tag">checkout</span></span><span class="tc-retry">↻1</span><span class="tc-duration">7.8s</span></div>
-            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC16 - Place order: Login before checkout</span><span class="tc-tags"><span class="tc-tag">checkout</span></span><span class="tc-retry">↻1</span><span class="tc-duration">6.4s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC14 - Place order: Register while checkout</span><span class="tc-tags"><span class="tc-tag">smoke</span><span class="tc-tag">checkout</span></span><span class="tc-duration">26.5s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC15 - Place order: Register before checkout</span><span class="tc-tags"><span class="tc-tag">checkout</span><span class="tc-tag">regression</span></span><span class="tc-duration">23.9s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC16 - Place order: Login before checkout</span><span class="tc-tags"><span class="tc-tag">checkout</span><span class="tc-tag">regression</span></span><span class="tc-duration">27.4s</span></div>
           </div>
         </div>
 
@@ -287,10 +285,10 @@
           <div class="suite-header" onclick="this.classList.toggle('open')">
             <span class="suite-toggle">▶</span>
             <span class="suite-name">contact / contact-us.spec.ts</span>
-            <div class="suite-stats"><span class="suite-badge f">0 / 1</span></div>
+            <div class="suite-stats"><span class="suite-badge p">1 / 1</span></div>
           </div>
           <div class="suite-body">
-            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC06 - Submit Contact Us form successfully</span><span class="tc-tags"><span class="tc-tag">regression</span></span><span class="tc-retry">↻1</span><span class="tc-duration">6.5s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC06 - Submit Contact Us form successfully</span><span class="tc-tags"><span class="tc-tag">regression</span></span><span class="tc-duration">4.9s</span></div>
           </div>
         </div>
 
@@ -299,15 +297,15 @@
           <div class="suite-header" onclick="this.classList.toggle('open')">
             <span class="suite-toggle">▶</span>
             <span class="suite-name">products / products.spec.ts</span>
-            <div class="suite-stats"><span class="suite-badge p">4</span><span class="suite-badge f">2</span></div>
+            <div class="suite-stats"><span class="suite-badge p">6 / 6</span></div>
           </div>
           <div class="suite-body">
-            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC07 - Navigate to Test Cases page</span><span class="tc-tags"><span class="tc-tag">products</span></span><span class="tc-retry">↻1</span><span class="tc-duration">4.0s</span></div>
-            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC08 - Verify All Products and product detail page</span><span class="tc-tags"><span class="tc-tag">smoke</span><span class="tc-tag">products</span></span><span class="tc-duration">5.3s</span></div>
-            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC09 - Search for a product</span><span class="tc-tags"><span class="tc-tag">smoke</span><span class="tc-tag">products</span></span><span class="tc-duration">4.4s</span></div>
-            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC18 - View category products</span><span class="tc-tags"><span class="tc-tag">products</span></span><span class="tc-duration">7.3s</span></div>
-            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC19 - View and cart brand products</span><span class="tc-tags"><span class="tc-tag">products</span></span><span class="tc-duration">7.0s</span></div>
-            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC21 - Add review on product</span><span class="tc-tags"><span class="tc-tag">products</span></span><span class="tc-retry">↻1</span><span class="tc-duration">10.4s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC07 - Navigate to Test Cases page</span><span class="tc-tags"><span class="tc-tag">products</span><span class="tc-tag">regression</span></span><span class="tc-duration">3.6s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC08 - Verify All Products and product detail page</span><span class="tc-tags"><span class="tc-tag">smoke</span><span class="tc-tag">products</span></span><span class="tc-duration">4.2s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC09 - Search for a product</span><span class="tc-tags"><span class="tc-tag">smoke</span><span class="tc-tag">products</span></span><span class="tc-duration">6.0s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC18 - View category products</span><span class="tc-tags"><span class="tc-tag">products</span><span class="tc-tag">regression</span></span><span class="tc-duration">7.8s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC19 - View and cart brand products</span><span class="tc-tags"><span class="tc-tag">products</span><span class="tc-tag">regression</span></span><span class="tc-duration">5.7s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC21 - Add review on product</span><span class="tc-tags"><span class="tc-tag">products</span><span class="tc-tag">regression</span></span><span class="tc-duration">16.0s</span></div>
           </div>
         </div>
 
@@ -316,10 +314,10 @@
           <div class="suite-header" onclick="this.classList.toggle('open')">
             <span class="suite-toggle">▶</span>
             <span class="suite-name">products / search.spec.ts</span>
-            <div class="suite-stats"><span class="suite-badge f">0 / 1</span></div>
+            <div class="suite-stats"><span class="suite-badge p">1 / 1</span></div>
           </div>
           <div class="suite-body">
-            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC20 - Search products and verify cart after login</span><span class="tc-tags"><span class="tc-tag">products</span></span><span class="tc-retry">↻1</span><span class="tc-duration">6.7s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC20 - Search products and verify cart after login</span><span class="tc-tags"><span class="tc-tag">products</span><span class="tc-tag">regression</span></span><span class="tc-duration">28.9s</span></div>
           </div>
         </div>
 
@@ -328,11 +326,11 @@
           <div class="suite-header" onclick="this.classList.toggle('open')">
             <span class="suite-toggle">▶</span>
             <span class="suite-name">subscription / subscription.spec.ts</span>
-            <div class="suite-stats"><span class="suite-badge p">1</span><span class="suite-badge f">1</span></div>
+            <div class="suite-stats"><span class="suite-badge p">2 / 2</span></div>
           </div>
           <div class="suite-body">
-            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC10 - Subscribe from home page</span><span class="tc-tags"><span class="tc-tag">smoke</span></span><span class="tc-duration">5.0s</span></div>
-            <div class="tc-row"><span class="tc-status failed"></span><span class="tc-name">TC11 - Subscribe from cart page</span><span class="tc-tags"><span class="tc-tag">regression</span></span><span class="tc-retry">↻1</span><span class="tc-duration">5.4s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC10 - Subscribe from home page</span><span class="tc-tags"><span class="tc-tag">smoke</span><span class="tc-tag">subscription</span></span><span class="tc-duration">2.8s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC11 - Subscribe from cart page</span><span class="tc-tags"><span class="tc-tag">subscription</span><span class="tc-tag">regression</span></span><span class="tc-duration">3.7s</span></div>
           </div>
         </div>
 
@@ -344,8 +342,8 @@
             <div class="suite-stats"><span class="suite-badge p">2 / 2</span></div>
           </div>
           <div class="suite-body">
-            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC25 - Scroll up using arrow button</span><span class="tc-tags"><span class="tc-tag">ui</span></span><span class="tc-duration">8.1s</span></div>
-            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC26 - Scroll up without arrow button</span><span class="tc-tags"><span class="tc-tag">ui</span></span><span class="tc-duration">3.6s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC25 - Scroll up using arrow button</span><span class="tc-tags"><span class="tc-tag">ui</span><span class="tc-tag">regression</span></span><span class="tc-duration">5.9s</span></div>
+            <div class="tc-row"><span class="tc-status passed"></span><span class="tc-name">TC26 - Scroll up without arrow button</span><span class="tc-tags"><span class="tc-tag">ui</span><span class="tc-tag">regression</span></span><span class="tc-duration">3.4s</span></div>
           </div>
         </div>
 
