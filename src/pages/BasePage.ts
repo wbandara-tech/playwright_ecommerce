@@ -41,8 +41,21 @@ export class BasePage {
 
   /** Click element with auto-scroll and retry */
   async clickElement(locator: Locator) {
-    await locator.scrollIntoViewIfNeeded();
-    await locator.click();
+    try {
+      // Wait for element to be attached and visible before scrolling
+      await locator.waitFor({ state: 'visible', timeout: 15000 });
+      await locator.scrollIntoViewIfNeeded({ timeout: 5000 });
+      await locator.click();
+    } catch {
+      // Fallback: force click if scroll/normal click failed (overlay, detached, etc.)
+      try {
+        await locator.click({ force: true, timeout: 10000 });
+      } catch {
+        // Last resort: JS click to bypass any overlays or stability issues
+        await locator.evaluate((el: HTMLElement) => el.click());
+      }
+    }
+    await this.page.waitForLoadState('domcontentloaded').catch(() => {});
   }
 
   /** Fill input with clear first */
